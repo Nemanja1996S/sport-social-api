@@ -44,15 +44,15 @@ decrypt(encryptedText: string): string {
     return await this.usersRepository.find()
   }
 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.usersRepository.findOne({ where: {id}});  //, relations: {posts: true}}
   }
 
   async findUser(email: string, password: string) {
-    return await this.usersRepository.findOne({ where: {email: email, password: password}});  //this.encrypt(
+    return await this.usersRepository.findOne({ where: {email: email, password: this.decrypt(password)}});  //this.encrypt(
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);
     if(!user){
       throw new NotFoundException();
@@ -61,7 +61,7 @@ decrypt(encryptedText: string): string {
     return await this.usersRepository.save(user);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.findOne(id);
     if(!user){
       throw new NotFoundException();

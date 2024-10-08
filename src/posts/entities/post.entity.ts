@@ -1,11 +1,9 @@
+import { AbstractEntity } from "src/database/abstract.entity";
 import { User } from "src/users/entities/user.entity";
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'posts'})
-export class Post {
-
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Post extends AbstractEntity<Post>{
 
     @ManyToOne(() => User, (user) => user.posts)
     user: User

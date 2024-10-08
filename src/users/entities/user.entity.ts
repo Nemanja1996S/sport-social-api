@@ -1,12 +1,10 @@
+import { AbstractEntity } from "src/database/abstract.entity";
 import { Friend } from "src/friends/entities/friend.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'users'})
-export class User {
-
-    @PrimaryGeneratedColumn()
-    id: number;
+export class User extends AbstractEntity<User>{
 
     @Column({type: 'text', nullable: false})
     name: string;
@@ -34,7 +32,7 @@ export class User {
     @Column('simple-array')
     selectedSports: string[];
 
-    @Column('simple-array')
+    @Column({type: 'int', nullable: true})
     friendsIds: number[];
 
     @Column({type: 'text', nullable: false})

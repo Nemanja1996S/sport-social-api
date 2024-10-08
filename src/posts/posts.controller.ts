@@ -19,26 +19,26 @@ export class PostsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.postsService.findOne(+id);
+    return this.postsService.findOne(id);
   }
 
   @Get('ofUser/:id')
-  findPostsOfUser(@Param('id') id: number) {
+  findPostsOfUser(@Param('id') id: string) {
     return this.postsService.findAllPostsOfUserId(id)// return this.postsService.findOne(+id);
   }
 
   @Get('forUser/:id')
-  findPostsForUser(@Param('id') id: number) {
+  findPostsForUser(@Param('id') id: string) {
     return this.postsService.findAllPostsForUserId(id)// return this.postsService.findOne(+id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(+id, updatePostDto);
+    return this.postsService.update(id, updatePostDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.postsService.remove(+id);
+    return this.postsService.remove(id);
   }
 }

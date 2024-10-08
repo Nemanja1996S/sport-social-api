@@ -23,11 +23,11 @@ export class PostsService {
     return await this.postsRepository.find({relations: {user: true}});
   }
 
-  async findAllPostsOfUserId(userId: number) {
-    return await this.postsRepository.find({where: {user: {id: userId}}});
+  async findAllPostsOfUserId(userId: string) {
+    return await this.postsRepository.find({where: {user: {id: userId}}})
   }
 
-  async findAllPostsForUserId(userId: number){  
+  async findAllPostsForUserId(userId: string){  
     // const foundUser = await this.userService.findOne(userId)
     // this.postsRepository.findOne()
     // return await this.postsRepository.findOne({
@@ -39,25 +39,26 @@ export class PostsService {
     //   }
 
     // })
-    const userIdString : string = userId.toString()
-    return await this.postsRepository.find({
-      relations: {
-        user: true
-      },
-      where: {
-        user:{
-          friendsIds: Raw((alias) => `${alias} @> ${userIdString}`)
-        }
-      }
-      
-    })
-
-    // return await this.postsRepository.findBy({
-    //   user: Raw((id) => `${us}`)
-    // })
+        // const userIdString : string = userId.toString()
+        // return await this.postsRepository.find({
+        //   relations: {
+        //     user: true
+        //   },
+        //   where: {
+        //     user:{
+        //       friendsIds: ArrayContains([...userId])//Raw((alias) => `${alias} @> ${userIdString}`) //${alias} @> ${userIdString}
+        //     }
+        //   }
+          
+        // })
+        
+        // return await this.postsRepository
+        // .createQueryBuilder("post")
+        // .where("post.user.id IN (...post.user.friendsIds)")
+        // .getMany();
   }
 
-  // areUserIdinFriendsIds(friendsIds: number[], userId: number){
+  // areUserIdinFriendsIds(friendsIds: string[], userId: string){
   //   return friendsIds.includes(userId)
   // }
 
@@ -71,11 +72,11 @@ export class PostsService {
 //     // }),
 // })
 // 
-  async findOne(id: number) {
+  async findOne(id: string) {
     return await this.postsRepository.findOne({where: {id}})
   }
 
-  async update(id: number, updatePostDto: UpdatePostDto) {
+  async update(id: string, updatePostDto: UpdatePostDto) {
     const post = await this.findOne(id)
     if(!post)
       throw NotFoundException;
@@ -83,7 +84,7 @@ export class PostsService {
     return await this.postsRepository.save(post)
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const post = await this.findOne(id);
     if(!post){
       throw new NotFoundException();
