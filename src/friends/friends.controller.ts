@@ -17,18 +17,23 @@ export class FriendsController {
     return this.friendsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.friendsService.findOne(+id);
+  @Get(':userId')
+  findAllFriends(@Param('userId') userId: string) {
+    return this.friendsService.findAllUserFriends(userId)
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateFriendDto: UpdateFriendDto) {
-    return this.friendsService.update(+id, updateFriendDto);
+  @Get(':userId/:friendId')
+  findFriendship(@Param('userId') userId: string, @Param('friendId') friendId: string) {
+    return this.friendsService.findFriendship(userId, friendId)
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.friendsService.remove(+id);
+  @Patch() //(':userId')
+  update(@Body() updateFriendDto: UpdateFriendDto) {  //@Param('userId') userId: string, 
+    return this.friendsService.update(updateFriendDto);
+  }
+
+  @Delete(':userId/:friendId')
+  remove(@Param('userId') userId: string, @Param('friendId') friendId: string) {
+    return this.friendsService.remove(userId, friendId);
   }
 }

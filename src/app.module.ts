@@ -5,9 +5,12 @@ import { UsersModule } from './users/users.module';
 import { FriendsModule } from './friends/friends.module';
 import { SportsModule } from './sports/sports.module';
 import { PostsModule } from './posts/posts.module';
+import { RequestsModule } from './requests/requests.module';
+import { ReactionsModule } from './reactions/reactions.module';
+import { CommentsModule } from './comments/comments.module';
 
 @Module({
-  imports: [UsersModule, FriendsModule, SportsModule, PostsModule],
+  imports: [UsersModule, FriendsModule, SportsModule, PostsModule, RequestsModule, ReactionsModule, CommentsModule],
   controllers: [AppController],
   providers: [AppService],
 })

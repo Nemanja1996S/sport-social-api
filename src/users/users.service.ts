@@ -4,6 +4,9 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import * as crypto from 'crypto';
+import { Friend } from 'src/friends/entities/friend.entity';
+import { Post } from 'src/posts/entities/post.entity';
+import { Request } from 'src/requests/entities/request.entity';
 @Injectable()
 export class UsersService {
 
@@ -35,22 +38,37 @@ decrypt(encryptedText: string): string {
   // }
   async create(createUserDto: CreateUserDto) {
     createUserDto.password = this.encrypt(createUserDto.password)
-    const user = this.usersRepository.create({...createUserDto, posts: []})
-
-    return await this.usersRepository.save(user);
+    // const user = new User({...createUserDto})
+    const user = this.usersRepository.create({...createUserDto, posts: [], friends: [], requests: []})
+    const friend = new Friend({
+      user: user
+    })
+    const post = new Post({
+      user: user
+    })
+    const request = new Request({
+      toUser: user
+    })
+    const finalUser = this.usersRepository.create({...user, posts: [...user.posts, post],
+      friends: [...user.friends, friend], requests: [...user.requests, request]})
+    
+    return await this.usersRepository.save(finalUser);
   }
 
   async findAll() {
-    return await this.usersRepository.find()
+    return await this.usersRepository.find({relations: {posts: true, friends: true, requests: true }})
   }
 
   async findOne(id: string) {
-    return await this.usersRepository.findOne({ where: {id}});  //, relations: {posts: true}}
+    return await this.usersRepository.findOne({ where: {id}, relations: {posts: true, friends: true }});  //, relations: {posts: true}}
   }
 
   async findUser(email: string, password: string) {
     return await this.usersRepository.findOne({ where: {email: email, password: this.decrypt(password)}});  //this.encrypt(
   }
+  // async findPostForUser(userId: string) {
+  //   return await this.usersRepository.findOne({relations: {posts: true, friends: true}, where: {}});  
+  // }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     const user = await this.findOne(id);

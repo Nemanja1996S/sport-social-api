@@ -1,32 +1,56 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateFriendDto } from './dto/create-friend.dto';
 import { UpdateFriendDto } from './dto/update-friend.dto';
 import { Repository } from 'typeorm';
 import { Friend } from './entities/friend.entity';
+import { User } from 'src/users/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class FriendsService {
   constructor(
     @Inject('FRIEND_REPOSITORY')
-      private friendsRepository: Repository<Friend>,
+      private friendsRepository: Repository<Friend>, private usersService: UsersService
+    //   @Inject('USER_REPOSITORY')
+    // private usersRepository: Repository<User>
     ) {}
-  create(createFriendDto: CreateFriendDto) {
-    return 'This action adds a new friend';
+
+  async create(createFriendDto: CreateFriendDto) {
+    const user = await this.usersService.findOne(createFriendDto.userId)
+    if(!user)
+      throw NotFoundException
+    const friend = await this.usersService.findOne(createFriendDto.friendId)
+    if(!friend)
+      throw NotFoundException
+    const newFriend = new Friend({user: user, friendId: createFriendDto.friendId})
+    const friendship = await this.friendsRepository.create(newFriend)
+    return await this.friendsRepository.save(friendship)
   }
 
-  findAll() {
-    return `This action returns all friends`;
+  async findAll() {
+    await this.friendsRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} friend`;
+  async findFriendship(userId: string, friendId: string) {
+    return await this.friendsRepository.findOne({relations: {user: true }, where: {user: {id: userId}, friendId: friendId}})
   }
 
-  update(id: number, updateFriendDto: UpdateFriendDto) {
-    return `This action updates a #${id} friend`;
+  async findAllUserFriends(userId: string) {
+    return await this.friendsRepository.find({relations: {user: true }, where: {user: {id: userId}}})
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} friend`;
+  async update(updateFriendDto: UpdateFriendDto) {  //add friend  userId: string, 
+    const friendship = await this.findFriendship(updateFriendDto.userId, updateFriendDto.friendId);
+    if(!friendship)
+      throw NotFoundException;
+    const addedFriendId = {...friendship, friendId: updateFriendDto.friendId}
+    return await this.friendsRepository.save(addedFriendId)
+  }
+
+  async remove(userId: string, friendId: string) {
+    const friendship = await this.findFriendship(userId, friendId);
+    if(!friendship)
+        throw NotFoundException;
+    return await this.friendsRepository.remove(friendship)
   }
 }

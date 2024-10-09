@@ -7,9 +7,9 @@ import { UpdatePostDto } from './dto/update-post.dto';
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postsService.create(createPostDto);
+  @Post(':userId')
+  create(@Param('userId') userId: string, @Body() createPostDto: CreatePostDto) {
+    return this.postsService.create(userId, createPostDto);
   }
 
   @Get()
@@ -17,14 +17,14 @@ export class PostsController {
     return this.postsService.findAll();//return this.postsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postsService.findOne(id);
-  }
+  // @Get(':id')
+  // findOne(@Param('id') id: string) {
+  //   return this.postsService.findOne(id);
+  // }
 
   @Get('ofUser/:id')
   findPostsOfUser(@Param('id') id: string) {
-    return this.postsService.findAllPostsOfUserId(id)// return this.postsService.findOne(+id);
+    return this.postsService.findAllPostsOfUser(id)// return this.postsService.findOne(+id);
   }
 
   @Get('forUser/:id')

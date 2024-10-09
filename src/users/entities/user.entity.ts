@@ -1,7 +1,8 @@
 import { AbstractEntity } from "src/database/abstract.entity";
 import { Friend } from "src/friends/entities/friend.entity";
 import { Post } from "src/posts/entities/post.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Request } from "src/requests/entities/request.entity";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'users'})
 export class User extends AbstractEntity<User>{
@@ -29,11 +30,14 @@ export class User extends AbstractEntity<User>{
     // @Column('simple-array')
     // friendsIds: number[];
 
+    @OneToMany(() => Request, request => request.toUser)
+    requests: Request[]
+
     @Column('simple-array')
     selectedSports: string[];
 
-    @Column({type: 'int', nullable: true})
-    friendsIds: number[];
+    // @Column({type: 'int', nullable: true})
+    // friendsIds: number[];
 
     @Column({type: 'text', nullable: false})
     dateOfBirth: string;
