@@ -10,7 +10,7 @@ export class Post extends AbstractEntity<Post>{
     @ManyToOne(() => User, (user) => user.posts, {cascade: true})
     user: User
 
-    @OneToMany(() => Reaction, (reaction) => reaction.post)
+    @OneToMany(() => Reaction, (reaction) => reaction.post, {cascade: true})
     usersReactions: Reaction[]
 
     @OneToMany(() => Comment, (comment) => comment.post)
@@ -28,13 +28,13 @@ export class Post extends AbstractEntity<Post>{
     @Column({type: 'text', nullable: true})
     image: string;
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: 0})
     numberOfLikes: number
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: 0})
     numberOfDislikes: number
 
-    @Column({nullable: true})
+    @Column({nullable: true, default: 0})
     numberOfComments: number
 
     

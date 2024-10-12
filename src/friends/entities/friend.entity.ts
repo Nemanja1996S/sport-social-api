@@ -9,6 +9,6 @@ export class Friend extends AbstractEntity<Friend>{
     user: User
 
     @Column({nullable: true})
-    friendId: string
+    friendId: number
 
 }

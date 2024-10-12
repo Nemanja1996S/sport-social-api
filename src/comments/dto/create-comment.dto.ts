@@ -1,6 +1,5 @@
 export class CreateCommentDto {
-    userId: string
-    commentDate: string
+    userId: number
     commentText?: string
     commentPic?: string
 }

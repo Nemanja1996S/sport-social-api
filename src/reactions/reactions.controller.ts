@@ -8,7 +8,7 @@ export class ReactionsController {
   constructor(private readonly reactionsService: ReactionsService) {}
 
   @Post(':postId')
-  create(@Param('postId') postId: string, @Body() createReactionDto: CreateReactionDto) {
+  create(@Param('postId') postId: number, @Body() createReactionDto: CreateReactionDto) {
     return this.reactionsService.create(postId, createReactionDto);
   }
 
@@ -18,17 +18,17 @@ export class ReactionsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.reactionsService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateReactionDto: UpdateReactionDto) {
-    return this.reactionsService.update(id, updateReactionDto);
+  @Patch(':postId')
+  update(@Param('postId') postId: number, @Body() updateReactionDto: UpdateReactionDto) {
+    return this.reactionsService.upsert(postId, updateReactionDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.reactionsService.remove(id);
   }
 }

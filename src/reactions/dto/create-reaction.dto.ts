@@ -1,8 +1,7 @@
 import { Post } from "src/posts/entities/post.entity"
 
 export class CreateReactionDto {
-    post: Post
-    userId: string
+    userId: number
     reactionEnum: ReactionEnum
 }
 

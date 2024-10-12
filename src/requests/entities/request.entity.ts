@@ -9,7 +9,7 @@ export class Request extends AbstractEntity<Request>{
     toUser: User
 
     @Column({nullable: false})
-    fromUserId: string
+    fromUserId: number
 
     // @OneToOne(() => User)
     // @JoinColumn()

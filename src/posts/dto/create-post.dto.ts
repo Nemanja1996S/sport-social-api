@@ -7,11 +7,10 @@ export class CreatePostDto {
     // userImage: string
     // userId: string;
     forSports: string[]
-    date: string
+    // date: string
     text?: string
     image?: string
     numberOfLikes: number = 0
-    usersReactions? : CreateReactionDto[] 
     numberOfDislikes: number = 0
     numberOfComments: number = 0
 }

@@ -4,7 +4,7 @@ import { PrimaryGeneratedColumn } from "typeorm";
 export class AbstractEntity<T> {
 
     @PrimaryGeneratedColumn()
-    id: string
+    id: number
 
     constructor(entity: Partial<T>){
         Object.assign(this, entity)

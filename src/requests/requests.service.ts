@@ -30,12 +30,12 @@ export class RequestsService {
     return await this.requestsRepository.find();
   }
 
-  async findAllRequestsForUser(userId: string) {
+  async findAllRequestsForUser(userId: number) {
     return await this.requestsRepository.find({relations: {toUser: true}, where: {toUser: {id: userId}}});
   }
 
-  async findRequest(toUserId: string, fromUserId: string) {
-    return await this.requestsRepository.findOne({relations: {toUser: true}, where: {toUser: {id: toUserId}, fromUserId: fromUserId}})
+  async findRequest(toUserId: number, fromUserId: number) {
+    return await this.requestsRepository.findOne({relations: {toUser: true}, where: {toUser: {id: toUserId}, }})//fromUserId: fromUserId
   }
 
   async update(updateRequestDto: UpdateRequestDto) {  //add request
@@ -46,11 +46,12 @@ export class RequestsService {
     return await this.create(updateRequestDto)
   }
 
-  async remove(userId: string, friendId: string) {
+  async remove(userId: number, friendId: number) {
     const request = await this.findRequest(userId, friendId);
     if(!request){
       throw new NotFoundException();
     }
     return await this.requestsRepository.remove(request)
   }
+
 }

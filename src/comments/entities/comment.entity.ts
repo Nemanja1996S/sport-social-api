@@ -8,7 +8,7 @@ export class Comment extends AbstractEntity<Comment>{
     post: Post
 
     @Column({nullable: false})
-    userId: string
+    userId: number
     
     @Column({nullable: false})
     commentDate: string

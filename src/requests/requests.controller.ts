@@ -18,7 +18,7 @@ export class RequestsController {
   }
 
   @Get(':userId')
-  findAllForUser(@Param('userId') userId: string) {
+  findAllForUser(@Param('userId') userId: number) {
     return this.requestsService.findAllRequestsForUser(userId)
   }
 
@@ -28,7 +28,7 @@ export class RequestsController {
   }
 
   @Delete(':userId/:friendId')
-  remove(@Param('userId') userId: string, @Param('friendId') friendId: string) {
+  remove(@Param('userId') userId: number, @Param('friendId') friendId: number) {
     return this.requestsService.remove(userId,friendId);
   }
 }

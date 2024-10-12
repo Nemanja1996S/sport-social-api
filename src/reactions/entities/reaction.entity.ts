@@ -6,11 +6,11 @@ import { ReactionEnum } from "../dto/create-reaction.dto"
 @Entity({name: 'reactions'})
 export class Reaction extends AbstractEntity<Reaction>{
     
-    @ManyToOne(() => Post, (post) => post.usersReactions, {cascade: true})
+    @ManyToOne(() => Post, (post) => post.usersReactions,)
     post: Post
 
     @Column({nullable: false})
-    userId: string
+    userId: number
 
     @Column({type: 'enum', enum: ReactionEnum, default: ReactionEnum.neutral})
     reactionEnum: ReactionEnum

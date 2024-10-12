@@ -31,15 +31,15 @@ export class FriendsService {
     await this.friendsRepository.find();
   }
 
-  async findFriendship(userId: string, friendId: string) {
+  async findFriendship(userId: number, friendId: number) {
     return await this.friendsRepository.findOne({relations: {user: true }, where: {user: {id: userId}, friendId: friendId}})
   }
 
-  async findAllUserFriends(userId: string) {
+  async findAllUserFriends(userId: number) {
     return await this.friendsRepository.find({relations: {user: true }, where: {user: {id: userId}}})
   }
 
-  async update(updateFriendDto: UpdateFriendDto) {  //add friend  userId: string, 
+  async update(updateFriendDto: UpdateFriendDto) {  //add friend  userId: number, 
     const friendship = await this.findFriendship(updateFriendDto.userId, updateFriendDto.friendId);
     if(!friendship)
       throw NotFoundException;
@@ -47,7 +47,7 @@ export class FriendsService {
     return await this.friendsRepository.save(addedFriendId)
   }
 
-  async remove(userId: string, friendId: string) {
+  async remove(userId: number, friendId: number) {
     const friendship = await this.findFriendship(userId, friendId);
     if(!friendship)
         throw NotFoundException;

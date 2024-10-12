@@ -8,7 +8,7 @@ export class CommentsController {
   constructor(private readonly commentsService: CommentsService) {}
 
   @Post(':postId')
-  create(@Param('postId') postId: string, @Body() createCommentDto: CreateCommentDto) {
+  create(@Param('postId') postId: number, @Body() createCommentDto: CreateCommentDto) {
     return this.commentsService.create(postId, createCommentDto);
   }
 
@@ -17,18 +17,23 @@ export class CommentsController {
     return this.commentsService.findAll();
   }
 
+  @Get('/a')
+  finda() {
+    return this.commentsService.findAllCommentsOfPostWithUser();
+  }
+
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: number) {
     return this.commentsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
+  update(@Param('id') id: number, @Body() updateCommentDto: UpdateCommentDto) {
     return this.commentsService.update(id, updateCommentDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: number) {
     return this.commentsService.remove(id);
   }
 }

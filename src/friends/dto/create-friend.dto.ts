@@ -1,5 +1,5 @@
 
 export class CreateFriendDto {
-    userId: string
-    friendId: string
+    userId: number
+    friendId: number
 }
