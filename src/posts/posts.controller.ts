@@ -36,10 +36,10 @@ export class PostsController {
     return this.postsService.findAllPostsOfUser2(id)// return this.postsService.findOne(+id);
   }
 
-  @Get('forUser/:id')
-  findPostsForUser(@Param('id') id: number) {
-    return this.postsService.findAllPostsForUserId(id)// return this.postsService.findOne(+id);
-  }
+  // @Get('forUser/:id')
+  // findPostsForUser(@Param('id') id: number) {
+  //   return this.postsService.findAllPostsForUserId(id)// return this.postsService.findOne(+id);
+  // }
 
   @Patch(':id')
   update(@Param('id') id: number, @Body() updatePostDto: UpdatePostDto) {

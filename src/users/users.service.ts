@@ -2,11 +2,18 @@ import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import * as crypto from 'crypto';
 import { Friend } from 'src/friends/entities/friend.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Request } from 'src/requests/entities/request.entity';
+
+interface DictWhereConditionForFriends{
+  // id: number,
+  // friendId: number
+  [id: string] : number,
+  // [friendId: string] : number
+}
 @Injectable()
 export class UsersService {
 
@@ -40,9 +47,10 @@ decrypt(encryptedText: string): string {
     createUserDto.password = this.encrypt(createUserDto.password)
     // const user = new User({...createUserDto})
     const user = this.usersRepository.create({...createUserDto, posts: [], friends: [], requests: []})
-    const friend = new Friend({
-      user: user
-    })
+    // const friends = new Friend({
+    //   user: user
+    // })
+    
     const post = new Post({
       user: user
     })
@@ -50,22 +58,82 @@ decrypt(encryptedText: string): string {
       toUser: user
     })
     const finalUser = this.usersRepository.create({...user, posts: [...user.posts, post],
-      friends: [...user.friends, friend], requests: [...user.requests, request]})
+      friends: [...user.friends], requests: [...user.requests, request]})
     
     return await this.usersRepository.save(finalUser);
   }
 
   async findAll() {
-    return await this.usersRepository.find({relations: {posts: true, friends: true, requests: true }})
+    return await this.usersRepository.find({relations: {friends: {users: true}}})//{relations: {posts: true, friends: true, requests: true }}
   }
 
   async findOne(id: number) {
-    return await this.usersRepository.findOne({ where: {id}, relations: {posts: true, friends: true }});  //, relations: {posts: true}}
+    return await this.usersRepository.findOne({ where: {id}, relations: {friends: true }});  //,posts: true,  relations: {posts: true}}
   }
 
-  async findUser(email: string, password: string) {
-    return await this.usersRepository.findOne({ where: {email: email, password: password}});  //this.decrypt(
+  async findUser(email: string, password: string) { //log
+    return await this.usersRepository.findOne({ where: {email: email, password: password},
+       relations: {friends: {users: true}},
+       select: {friends: true }});//requests: {id: true, fromUser: {id: true}} 
   }
+
+
+  async findUsersWithStartingNameOrSurname(startingString: string){
+    const lowerLetters: string =  startingString.slice(1).toLowerCase().trim()
+    const newSubstring: string = startingString.charAt(0).toUpperCase() + lowerLetters
+    return await this.usersRepository.find({
+      where: [
+        {
+          name: Like(`%${newSubstring}%`),
+        },
+        {
+          surname: Like(`%${newSubstring}%`)
+        }
+      ],
+      take: 10,
+    })
+  }
+
+  async findAllRequestsForUserAndFromUsers(userId: number) {
+    // const allRequests = await this.usersRepository.findOne({relations: {requests: true},
+    //    where: {requests: {toUser: {id: userId } }, id: userId}});
+
+    // let fromUserIds: number[] = allRequests.requests.map(req => req.fromUserId)
+    // let dictWhereCondition: DictWhereConditionForFriends[] = []
+
+    // fromUserIds.map(idFrom => dictWhereCondition.push({id: idFrom}))
+    // //treba mi where request.toUser.id == userId
+    
+    // return await this.usersRepository.find({where: dictWhereCondition,
+    //    relations: {requests: true, friends: true},
+    //    select: {id: true, name: true, surname: true, picture: true, selectedSports: true,
+    //      friends: {friendId: true}, requests},   })  //, requests: {id: true, toUser: {id: true}} mi ne treba
+    //   //   return await this.usersRepository.find({where: {id: userId},
+    //   //  relations: {requests: true, friends: true},
+    //   //  select: {friends: {friendId: true}, requests: {id: true, toUser: {id: true},
+    //   //     fromUser: {id: true, name: true, surname: true, picture: true, selectedSports: true, friends: {friendId: true}}}} })
+  }
+
+
+  // async findAllUserFriends(userId: number) {  //userd/friennd
+  //   const user = await this.findOne(userId)
+  //   const friendsIds: number[] = []
+  //   user.friends.map(friend => friendsIds.push(friend.friendId) )
+  //   let dictWhereCondition : DictWhereConditionForFriends[] = []
+  //   friendsIds.map(friendId => dictWhereCondition.push({id: friendId }))
+    
+  //   return await this.usersRepository.find({ where: dictWhereCondition,
+  //      relations: {friends: true},
+  //       select: {id: true, name: true, surname: true, picture: true, selectedSports: true,
+  //          friends: {friendId: true} }});  //this.decrypt(
+  // }
+
+
+  // async findUserFriends(userId: number) {
+  //   return await this.usersRepository.find({ where: {id: userId},
+  //      relations: {friends: true},
+  //       select: {id: true, name: true, surname: true, picture: true, selectedSports: true, friends: {friendId: true} }});  //this.decrypt(
+  // }
   // async findPostForUser(userid: number) {
   //   return await this.usersRepository.findOne({relations: {posts: true, friends: true}, where: {}});  
   // }

@@ -17,17 +17,13 @@ export class FriendsController {
     return this.friendsService.findAll();
   }
 
-  @Get(':userId')
-  findAllFriends(@Param('userId') userId: number) {
-    return this.friendsService.findAllUserFriends(userId)
+  @Get(':id')
+  findFriendEntity(@Param('id') id: number) {
+    return this.friendsService.getFriendEntity(id);
   }
 
-  @Get(':userId/:friendId')
-  findFriendship(@Param('userId') userId: number, @Param('friendId') friendId: number) {
-    return this.friendsService.findFriendship(userId, friendId)
-  }
 
-  @Patch() //(':userId')
+  @Patch() 
   update(@Body() updateFriendDto: UpdateFriendDto) {  //@Param('userId') userId: number, 
     return this.friendsService.update(updateFriendDto);
   }

@@ -37,5 +37,5 @@ export class Post extends AbstractEntity<Post>{
     @Column({nullable: true, default: 0})
     numberOfComments: number
 
-    
+
 }

@@ -23,10 +23,29 @@ export class UsersController {
     return this.usersService.findOne(id);
   }
 
+  // @Get('friends/:userId')
+  // findALLFriends(@Param('userId') userId: number) {
+  //   return this.usersService.findAllUserFriends(userId);
+  // }
+
+  // @Get('userFriends/:id')
+  // findFriends(@Param('id') id: number) {
+  //   return this.usersService.findUserFriends(id);
+  // }
+
   @Get('login/user?')
   findUser(@Query('email') email: string, @Query('password') password: string) {
     return this.usersService.findUser(email, password);
+  }
 
+  @Get('/requests/:userId')
+  findRequestAndTheirUserData(@Param('userId') id: number) {
+    return this.usersService.findAllRequestsForUserAndFromUsers(id);
+  }
+  
+  @Get('like/:substring')
+  findUsersWithStartingSubstring(@Param('substring') substring: string) {
+    return this.usersService.findUsersWithStartingNameOrSurname(substring);
   }
 
   // if(user){

@@ -22,7 +22,7 @@ export class RequestsService {
     if(!fromUser){
       throw new NotFoundException;
     }
-    const request = this.requestsRepository.create({toUser: toUser, fromUserId: fromUser.id});
+    const request = this.requestsRepository.create({toUser: toUser, fromUser: fromUser});
     return await this.requestsRepository.save(request)
   }
 
@@ -30,9 +30,19 @@ export class RequestsService {
     return await this.requestsRepository.find();
   }
 
-  async findAllRequestsForUser(userId: number) {
-    return await this.requestsRepository.find({relations: {toUser: true}, where: {toUser: {id: userId}}});
-  }
+  // async findAllRequestsForUser(userId: number) {
+  //   return await this.requestsRepository.find({relations: { fromUser: {friends: true}}, //toUser: true,
+  //      where: {toUser: {id: userId}},
+  //     select: { fromUser: {id: true, name: true, surname: true, selectedSports: true, //toUser: {id: true},
+  //       picture: true, 
+  //        friends: {friendId: true}}}});  //friendsIDs nema
+  // }
+
+  // async findAllRequestsForUserAndFromUsers(userId: number) {
+  //   const allRequests = await this.requestsRepository.find({relations: {toUser: true}, where: {toUser: {id: userId}}});
+  //   let fromUserIds: number[] = allRequests.map(request => request.fromUserId)
+  //   return this.usersService.find
+  // }
 
   async findRequest(toUserId: number, fromUserId: number) {
     return await this.requestsRepository.findOne({relations: {toUser: true}, where: {toUser: {id: toUserId}, }})//fromUserId: fromUserId

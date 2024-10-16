@@ -12,15 +12,20 @@ export class RequestsController {
     return this.requestsService.create(createRequestDto);
   }
 
+  @Post()
+  accept(@Body() createRequestDto: CreateRequestDto) {  ////////accaept rq
+    return this.requestsService.create(createRequestDto);
+  }
+
   @Get()
   findAll() {
     return this.requestsService.findAll();
   }
 
-  @Get(':userId')
-  findAllForUser(@Param('userId') userId: number) {
-    return this.requestsService.findAllRequestsForUser(userId)
-  }
+  // @Get(':userId')
+  // findAllForUser(@Param('userId') userId: number) {
+  //   return this.requestsService.findAllRequestsForUser(userId)
+  // }
 
   @Patch(':userId')
   updateAdd(@Body() updateRequestDto: UpdateRequestDto) {

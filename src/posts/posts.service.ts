@@ -35,6 +35,9 @@ export class PostsService {
 
     return await this.postsRepository.save(post)
   }
+  async findOneUser(userId: number){
+    return await this.usersService.findOne(userId)
+  }
 
   async findAllPostsOfUser(userId: number) {
     return await this.postsRepository.find({ 
@@ -104,27 +107,27 @@ export class PostsService {
   }
 
 
-  async findAllPostsForUserId(userId: number){  
+  // async findAllPostsForUserId(userId: number){  
 
-    // 1. naci prijatelje usera, 2. naci njihove postove i vrati
-    const friends = await this.friendsService.findAllUserFriends(userId)
+  //   // 1. naci prijatelje usera, 2. naci njihove postove i vrati
+  //   const friends = await this.friendsService.findAllUserFriends(userId)
 
-    const celaFunckija = async(friendss: Friend[]) => {
-      let posts: PostModel[] = [];
-      for(const friend of friendss){
-        const friendsPosts = await this.findAllPostsOfUser(friend.id)
-        for(const friendPost of friendsPosts){
-          posts.push(friendPost)
-        }
-        const userPosts = await this.findAllPostsOfUser(userId)
-        for(const userPost of userPosts){
-          posts.push(userPost)
-        }
-      }
-      return posts
-    }
-    return await celaFunckija(friends);
-    
+  //   const celaFunckija = async(friendss: Friend[]) => {
+  //     let posts: PostModel[] = [];
+  //     for(const friend of friendss){
+  //       const friendsPosts = await this.findAllPostsOfUser(friend.id)
+  //       for(const friendPost of friendsPosts){
+  //         posts.push(friendPost)
+  //       }
+  //       const userPosts = await this.findAllPostsOfUser(userId)
+  //       for(const userPost of userPosts){
+  //         posts.push(userPost)
+  //       }
+  //     }
+  //     return posts
+  //   }
+  //   return await celaFunckija(friends);
+// }
     
     // friends.forEach(async friend => {
     // const friednsPosts = await this.findAllPostsOfUser(friend.id)
@@ -223,7 +226,7 @@ export class PostsService {
     //   });
     // })
     // return posts};
-  }
+  
 
   // areUserIdinFriendsIds(friendsIds: string[], userid: number){
   //   return friendsIds.includes(userId)
