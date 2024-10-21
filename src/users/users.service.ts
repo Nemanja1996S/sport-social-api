@@ -7,8 +7,10 @@ import * as crypto from 'crypto';
 import { Friend } from 'src/friends/entities/friend.entity';
 import { Post } from 'src/posts/entities/post.entity';
 import { Request } from 'src/requests/entities/request.entity';
+import { FriendsService } from 'src/friends/friends.service';
+import { SearchUserDto } from './dto/search-user.dto';
 
-interface DictWhereConditionForFriends{
+export interface DictWhereConditionForFriends{
   // id: number,
   // friendId: number
   [id: string] : number,
@@ -17,9 +19,11 @@ interface DictWhereConditionForFriends{
 @Injectable()
 export class UsersService {
 
+  
   constructor(
   @Inject('USER_REPOSITORY')
     private usersRepository: Repository<User>,
+    @Inject(FriendsService) private friendsService: FriendsService
   ) {}
 
     algorithm = 'aes-256-cbc';
@@ -46,38 +50,59 @@ decrypt(encryptedText: string): string {
   async create(createUserDto: CreateUserDto) {
     createUserDto.password = this.encrypt(createUserDto.password)
     // const user = new User({...createUserDto})
-    const user = this.usersRepository.create({...createUserDto, posts: [], friends: [], requests: []})
+    const user = await this.usersRepository.create({...createUserDto, posts: [], requests: [], friendships: []})
     // const friends = new Friend({
     //   user: user
     // })
-    
     const post = new Post({
       user: user
     })
     const request = new Request({
       toUser: user
     })
-    const finalUser = this.usersRepository.create({...user, posts: [...user.posts, post],
-      friends: [...user.friends], requests: [...user.requests, request]})
-    
-    return await this.usersRepository.save(finalUser);
+    const finalUser = this.usersRepository.create({...user, posts: [...user.posts, post], requests: [...user.requests, request], friendships: []})
+    const save = await this.usersRepository.save(finalUser)
+    await this.friendsService.create({friendId: save.id})
+    return save;
   }
 
   async findAll() {
-    return await this.usersRepository.find({relations: {friends: {users: true}}})//{relations: {posts: true, friends: true, requests: true }}
+    return await this.usersRepository.find()//{relations: {posts: true, friends: true, requests: true }}
   }
 
   async findOne(id: number) {
-    return await this.usersRepository.findOne({ where: {id}, relations: {friends: true }});  //,posts: true,  relations: {posts: true}}
+    return await this.usersRepository.findOne({ where: {id}, relations: {posts: true }});  //, relations: {posts: true}}
+  }
+  async findUserByid(id: number) {
+    return await this.usersRepository.findOne({ where: {id},
+       relations: {friendships: {friend: true}, requests: {fromUser: true}},
+      select: {requests: true}});  //, relations: {posts: true}}
+  }
+
+  async findOneWithFriends(id: number) {
+    return await this.usersRepository.findOne({ where: {id}, relations: {posts: true}});  
   }
 
   async findUser(email: string, password: string) { //log
-    return await this.usersRepository.findOne({ where: {email: email, password: password},
-       relations: {friends: {users: true}},
-       select: {friends: true }});//requests: {id: true, fromUser: {id: true}} 
+    return await this.usersRepository.findOne({ where: {email: email, password: password,
+       friendships: {user: {email: email, password: password}}}, relations: {friendships: {friend: true}}});
+    
+      //  relations: {friends: {users: true}},
+      //  select: {friends: { users: {id: true, name: true}} //requests: {id: true, fromUser: {id: true}} 
   }
 
+  async findUserFriendsAndTheirFriendsIds(friendsIds: SearchUserDto[]) { 
+    return await this.usersRepository.find({ where: {
+      friendships: {user: friendsIds}}, relations: {friendships: {friend: true}},
+    select: {id: true, name: true, surname: true, picture: true, selectedSports: true, friendships: {id: true, friend: {id: true}}}});
+    
+    //    relations: {friends: {users: true}},
+    //    select: {friends: { users: {id: true, name: true}} //requests: {id: true, fromUser: {id: true}} 
+  }
 
+//   const loadedPosts = await dataSource.getRepository(Post).findBy({
+//     title: Like("%out #%"),
+// })
   async findUsersWithStartingNameOrSurname(startingString: string){
     const lowerLetters: string =  startingString.slice(1).toLowerCase().trim()
     const newSubstring: string = startingString.charAt(0).toUpperCase() + lowerLetters
@@ -138,8 +163,8 @@ decrypt(encryptedText: string): string {
   //   return await this.usersRepository.findOne({relations: {posts: true, friends: true}, where: {}});  
   // }
 
-  async update(id: number, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
+  async update(updateUserDto: UpdateUserDto) {
+    const user = await this.findOne(updateUserDto.id);
     if(!user){
       throw new NotFoundException();
     }

@@ -28,16 +28,20 @@ export class ReactionsService {
     return this.reactionsRepository.findOne({where: {id}, relations: {post: true}})
   }
 
-  async findReactionForPost(postId: number) {
-    return this.reactionsRepository.findOne({where: {post: {id: postId}}})
+  async findReactionForPostAndUser(postId: number, userId: number) {
+    return this.reactionsRepository.findOne({where: {post: {id: postId}, userId: userId}})
   }
 
   async upsert(postId: number, updateReactionDto: UpdateReactionDto) {
-    const reaction = await this.findReactionForPost(postId);
+    const reaction = await this.findReactionForPostAndUser(postId, updateReactionDto.userId);
     const post = await this.postsService.findOne(postId)
     if(!reaction){
       if(!post)
         throw new NotFoundException();
+      if(updateReactionDto.reactionEnum === ReactionEnum.like)
+        await this.postsService.increaseNumberOfLikes(post);
+      if(updateReactionDto.reactionEnum === ReactionEnum.dislike)
+        await this.postsService.increaseNumberOfDislikes(post);
       const newReaction = this.reactionsRepository.create({...updateReactionDto, post: post})
       return await this.reactionsRepository.save(newReaction)
     }
@@ -45,36 +49,43 @@ export class ReactionsService {
       return
     }
     let currentReactionEnum : ReactionEnum = ReactionEnum.neutral
+
     if(updateReactionDto.reactionEnum === ReactionEnum.like){
       if(reaction.reactionEnum.valueOf() === ReactionEnum.dislike.valueOf())
       {
-        this.postsService.increaseNumberOfLikes(post);
-        this.postsService.decreaseNumberOfDislikes(post);
+        console.log("Upao sam u bio dislajk, a udaren lajk")
+        await this.postsService.increaseNumberOfLikesAndDecreaseNumberOfDislikes(post)
         currentReactionEnum = ReactionEnum.like
       }
-      else if(reaction.reactionEnum.valueOf() === ReactionEnum.like.valueOf()){
-        this.postsService.decreaseNumberOfLikes(post)
-        currentReactionEnum = ReactionEnum.neutral
-      }
-      else{
-        this.postsService.increaseNumberOfLikes(post)
-        currentReactionEnum = ReactionEnum.like
+      else {
+        if(reaction.reactionEnum.valueOf() === ReactionEnum.like.valueOf()){
+          await this.postsService.decreaseNumberOfLikes(post)
+          currentReactionEnum = ReactionEnum.neutral
+        }
+        else{
+          await this.postsService.increaseNumberOfLikes(post)
+          currentReactionEnum = ReactionEnum.like
+        }
       }
     }
     else{
-      if(reaction.reactionEnum === ReactionEnum.dislike){
-        this.postsService.decreaseNumberOfDislikes(post)
+      if(reaction.reactionEnum.valueOf() === ReactionEnum.dislike.valueOf()){
+        await this.postsService.decreaseNumberOfDislikes(post)
         currentReactionEnum = ReactionEnum.neutral
       }
-      else if(reaction.reactionEnum === ReactionEnum.like){
-        this.postsService.decreaseNumberOfLikes(post)
-        this.postsService.increaseNumberOfDislikes(post)
-        currentReactionEnum = ReactionEnum.dislike
-      }
       else{
-        this.postsService.increaseNumberOfDislikes(post)
-        currentReactionEnum = ReactionEnum.dislike
-      }
+        if(reaction.reactionEnum.valueOf() === ReactionEnum.like.valueOf()){
+          // console.log("Upao sam u bio lajk, a udaren dislajk")
+          await this.postsService.increaseNumberOfDislikesAndDecreaseNumberOfLikes(post)
+          // await this.postsService.decreaseNumberOfLikes(post)
+          // await this.postsService.increaseNumberOfDislikes(post)
+          currentReactionEnum = ReactionEnum.dislike
+        }
+        else{
+          await this.postsService.increaseNumberOfDislikes(post)
+          currentReactionEnum = ReactionEnum.dislike
+        }
+      } 
     }
     const newReaction = {...reaction, reactionEnum : currentReactionEnum}
     return await this.reactionsRepository.save(newReaction);

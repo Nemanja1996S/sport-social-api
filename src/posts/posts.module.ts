@@ -7,11 +7,12 @@ import { UsersService } from 'src/users/users.service';
 import { usersProviders } from 'src/users/users.providers';
 import { friendsProviders } from 'src/friends/friends.providers';
 import { FriendsService } from 'src/friends/friends.service';
+import { FriendshipModule } from 'src/friendship/friendship.module';
 // import { UsersService } from 'src/users/users.service';
 // import { usersProviders } from 'src/users/users.providers';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, FriendshipModule],
   controllers: [PostsController],
   providers: [...postsProviders, PostsService, ...usersProviders, UsersService, ...friendsProviders, FriendsService],
   exports: [...postsProviders, PostsService] //...usersProviders, UsersService

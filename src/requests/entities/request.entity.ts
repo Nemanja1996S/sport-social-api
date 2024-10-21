@@ -8,7 +8,7 @@ export class Request extends AbstractEntity<Request>{
     @ManyToOne(() => User, (user) => user.requests, {cascade: true})
     toUser: User
 
-    @OneToOne(() => User, (user) => user.request, {cascade: true})
-    @JoinColumn()
+    @ManyToOne(() => User, (user) => user.request, {cascade: true})
+    // @JoinColumn()
     fromUser: User
 }

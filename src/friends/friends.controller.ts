@@ -17,10 +17,10 @@ export class FriendsController {
     return this.friendsService.findAll();
   }
 
-  @Get(':id')
-  findFriendEntity(@Param('id') id: number) {
-    return this.friendsService.getFriendEntity(id);
-  }
+  // @Get(':id')
+  // findFriendEntity(@Param('id') id: number) {
+  //   return this.friendsService.getFriendEntity(id);
+  // }
 
 
   @Patch() 

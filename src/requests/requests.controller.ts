@@ -22,14 +22,24 @@ export class RequestsController {
     return this.requestsService.findAll();
   }
 
-  // @Get(':userId')
-  // findAllForUser(@Param('userId') userId: number) {
-  //   return this.requestsService.findAllRequestsForUser(userId)
-  // }
+  @Get(':userId')
+  findAllForUser(@Param('userId') userId: number) {
+    return this.requestsService.findAllRequestsForUser(userId)
+  }
+
+  @Get(':userId/:friendId')
+  getRequest(@Param('userId') userId: number, @Param('friendId') friendId: number) {
+    return this.requestsService.findRequest2(friendId, userId)
+  }
 
   @Patch(':userId')
   updateAdd(@Body() updateRequestDto: UpdateRequestDto) {
     return this.requestsService.update(updateRequestDto);
+  }
+
+  @Delete(':id')
+  removeId(@Param('id') id: number) {
+    return this.requestsService.removeId(id);
   }
 
   @Delete(':userId/:friendId')

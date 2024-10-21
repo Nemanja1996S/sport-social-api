@@ -30,13 +30,12 @@ export class RequestsService {
     return await this.requestsRepository.find();
   }
 
-  // async findAllRequestsForUser(userId: number) {
-  //   return await this.requestsRepository.find({relations: { fromUser: {friends: true}}, //toUser: true,
-  //      where: {toUser: {id: userId}},
-  //     select: { fromUser: {id: true, name: true, surname: true, selectedSports: true, //toUser: {id: true},
-  //       picture: true, 
-  //        friends: {friendId: true}}}});  //friendsIDs nema
-  // }
+  async findAllRequestsForUser(userId: number) {
+    return await this.requestsRepository.find({relations: { fromUser: {friendships: {friend: true}}}, //toUser: true,
+       where: {toUser: {id: userId}},
+      select: { fromUser: {id: true, name: true, surname: true, selectedSports: true, //toUser: {id: true},
+        picture: true, friendships: true}}});  //{id: false, friend: {id: true}} friendsIDs nema {friend: {id: true}}
+  }
 
   // async findAllRequestsForUserAndFromUsers(userId: number) {
   //   const allRequests = await this.requestsRepository.find({relations: {toUser: true}, where: {toUser: {id: userId}}});
@@ -48,12 +47,27 @@ export class RequestsService {
     return await this.requestsRepository.findOne({relations: {toUser: true}, where: {toUser: {id: toUserId}, }})//fromUserId: fromUserId
   }
 
+  async findRequest2(toUserId: number, fromUserId: number) {
+    return await this.requestsRepository.findOne({
+       where: {toUser: [{id: toUserId}, {id: fromUserId}], fromUser: [{id: fromUserId}, {id: toUserId} ]},
+      select: {id: true, fromUser: {id: true}, toUser: {id: true}},
+    relations: {toUser: true, fromUser: true}})//fromUserId: fromUserId
+  }
+
   async update(updateRequestDto: UpdateRequestDto) {  //add request
     const request = await this.findRequest(updateRequestDto.fromUserId, updateRequestDto.toUserId);
     if(request){
       throw new error("Request already exists");
     }
     return await this.create(updateRequestDto)
+  }
+
+  async removeId(id: number) {
+    const request = await this.requestsRepository.findOneBy({id: id})
+    if(!request){
+      throw new NotFoundException();
+    }
+    return await this.requestsRepository.remove(request)
   }
 
   async remove(userId: number, friendId: number) {

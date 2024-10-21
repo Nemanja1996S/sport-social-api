@@ -5,6 +5,7 @@ import { Comment } from './entities/comment.entity';
 import { getCurrentDateAndTime, PostsService } from 'src/posts/posts.service';
 import { Repository } from 'typeorm';
 import { error } from 'console';
+import { Post } from 'src/posts/entities/post.entity';
 
 
 @Injectable()
@@ -17,12 +18,13 @@ export class CommentsService {
   ){}
 
   async create(postId: number, createCommentDto: CreateCommentDto) {
-    const post = await this.postsService.findOne(postId)
+    const post: Post = await this.postsService.findOne(postId)
     const user = await this.postsService.findOneUser(createCommentDto.userId)
     if(!post && !user)
       throw new error("Nemoguce postaviti komentar")
-    const s = await this.postsService.increaseNumberOfComments(post)
-    const comment = this.commentsRepository.create({...createCommentDto, commentDate: getCurrentDateAndTime(), post: post, user: user})
+    // const s = await this.postsService.increaseNumberOfComments(post)
+    const newPost: Post = {...post, numberOfComments: post.numberOfComments + 1 }
+    const comment = this.commentsRepository.create({...createCommentDto, commentDate: getCurrentDateAndTime(), post: newPost, user: user})
     return await this.commentsRepository.save(comment)
   }
 
@@ -73,7 +75,7 @@ export class CommentsService {
   async update(commentId: number, updateCommentDto: UpdateCommentDto) {
     const comment = await this.findOne(commentId)
     if(!comment)
-      throw new error("Ne moze izmeniti komentar")
+      throw new NotFoundException();
     Object.assign(comment, updateCommentDto, {date: getCurrentDateAndTime()})
     return await this.commentsRepository.save(comment)
   }
@@ -83,8 +85,9 @@ export class CommentsService {
     if(!comment){
       throw new NotFoundException();
     }
-    await this.postsService.decreaseNumberOfComments(comment.post)
-    this.commentsRepository.remove(comment)
-    return await this.commentsRepository.save(comment);
+    const newComment: Comment = {...comment, post: {...comment.post, numberOfComments: comment.post.numberOfComments -1}}
+    // await this.postsService.decreaseNumberOfComments(comment.post)
+    this.commentsRepository.save(newComment);
+    return await this.commentsRepository.remove(newComment);
   }
 }

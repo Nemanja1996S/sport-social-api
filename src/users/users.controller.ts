@@ -1,8 +1,9 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
-import { UsersService } from './users.service';
+import { DictWhereConditionForFriends, UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { StatusCodes } from 'http-status-codes';
+import { SearchUserDto } from './dto/search-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -20,9 +21,13 @@ export class UsersController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.usersService.findOne(id);
+    return this.usersService.findUserByid(id);
   }
-
+  @Post('/friendsAndTheirFriendsIds')
+  findAllFriendsAndTheirFriendsIds(@Body() body: SearchUserDto[] ) {
+    return this.usersService.findUserFriendsAndTheirFriendsIds(body);
+  }
+  
   // @Get('friends/:userId')
   // findALLFriends(@Param('userId') userId: number) {
   //   return this.usersService.findAllUserFriends(userId);
@@ -66,9 +71,9 @@ export class UsersController {
   //     }
   //   }
   //   )
-  @Patch(':id')
-  update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(id, updateUserDto);
+  @Patch()
+  update(@Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(updateUserDto);
   }
 
   @Delete(':id')

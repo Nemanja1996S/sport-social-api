@@ -8,9 +8,10 @@ import { PostsModule } from './posts/posts.module';
 import { RequestsModule } from './requests/requests.module';
 import { ReactionsModule } from './reactions/reactions.module';
 import { CommentsModule } from './comments/comments.module';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
-  imports: [UsersModule, FriendsModule, SportsModule, PostsModule, RequestsModule, ReactionsModule, CommentsModule],
+  imports: [UsersModule, FriendsModule, SportsModule, PostsModule, RequestsModule, ReactionsModule, CommentsModule, FriendshipModule],
   controllers: [AppController],
   providers: [AppService],
 })

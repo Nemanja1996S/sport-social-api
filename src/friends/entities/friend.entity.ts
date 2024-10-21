@@ -1,12 +1,19 @@
 import { AbstractEntity } from "src/database/abstract.entity";
+import { Friendship } from "src/friendship/entities/friendship.entity";
 import { User } from "src/users/entities/user.entity";
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity({name: 'friends'})
-export class Friend extends AbstractEntity<Friend>{
-    
-    @ManyToMany(() => User, (user) => user.friends, {cascade: true})
-    @JoinTable()
-    users: User[]
+export class Friend {
+
+    @PrimaryColumn()
+    id: number;
+
+    @OneToMany(() => Friendship, (friendship) => friendship.friend)
+    friendships: Friendship[]
+
+     // @OneToOne(() => User, (user) => user.friend)
+    // @JoinColumn()
+    // user: User
 
 }

@@ -9,11 +9,14 @@ import { ArrayContains } from "typeorm"
 import { FriendsService } from 'src/friends/friends.service';
 import { Friend } from 'src/friends/entities/friend.entity';
 import { PostModel } from './posts.model';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Injectable()
 export class PostsService {
 
-  constructor(@Inject('POST_REPOSITORY') private postsRepository: Repository<Post>, private usersService: UsersService, private friendsService: FriendsService
+  constructor(@Inject('POST_REPOSITORY') private postsRepository: Repository<Post>,
+   private usersService: UsersService, 
+   private friendshipService: FriendshipService
   // private userService: UsersService
   ){}//@Inject('USER_REPOSITORY') private usersRepository: Repository<User>
 
@@ -107,27 +110,28 @@ export class PostsService {
   }
 
 
-  // async findAllPostsForUserId(userId: number){  
+  async findAllPostsForUserId(userId: number){  
 
-  //   // 1. naci prijatelje usera, 2. naci njihove postove i vrati
-  //   const friends = await this.friendsService.findAllUserFriends(userId)
+    // 1. naci prijatelje usera, 2. naci njihove postove i vrati
+    const friendships = await this.friendshipService.findAllRealationshipsForUser(userId)
+    const friends: number[] = friendships.map(friendship => friendship.friend.id)
 
-  //   const celaFunckija = async(friendss: Friend[]) => {
-  //     let posts: PostModel[] = [];
-  //     for(const friend of friendss){
-  //       const friendsPosts = await this.findAllPostsOfUser(friend.id)
-  //       for(const friendPost of friendsPosts){
-  //         posts.push(friendPost)
-  //       }
-  //       const userPosts = await this.findAllPostsOfUser(userId)
-  //       for(const userPost of userPosts){
-  //         posts.push(userPost)
-  //       }
-  //     }
-  //     return posts
-  //   }
-  //   return await celaFunckija(friends);
-// }
+    const celaFunckija = async(friendsIds: number[]) => {
+      let posts: PostModel[] = [];
+      for(const friendId of friendsIds){
+        const friendsPosts = await this.findAllPostsOfUser(friendId)
+        for(const friendPost of friendsPosts){
+          posts.push(friendPost)
+        }
+        const userPosts = await this.findAllPostsOfUser(userId)
+        for(const userPost of userPosts){
+          posts.push(userPost)
+        }
+      }
+      return posts
+    }
+    return await celaFunckija(friends);
+}
     
     // friends.forEach(async friend => {
     // const friednsPosts = await this.findAllPostsOfUser(friend.id)
@@ -249,6 +253,7 @@ export class PostsService {
     if(!post)
       throw NotFoundException;
     Object.assign(post, updatePostDto)
+    post.date = getCurrentDateAndTime()
     // if(updatePostDto.text && updatePostDto){
     //   const newPost = {...post, te }
     // }
@@ -256,15 +261,22 @@ export class PostsService {
     return await this.postsRepository.save(post)
   }
 
-  async increaseNumberOfComments(post: Post) {
-    const newPost = {...post, numberOfComments: post.numberOfComments + 1}
-    return await this.postsRepository.save(newPost)
-  }
+  // async increaseNumberOfComments(post: Post) {
+  //   console.log('iz post servis')
+  //   console.log(post)
+  //   const oldNumberOfComments = post.numberOfComments
+  //   const newNumberOfLikes = oldNumberOfComments + 1
+  //   const newPost = {...post, numberOfComments: newNumberOfLikes}
+  //   console.log(newPost)
+  //   // Object.assign(newPost, post)
+  //   // newPost.numberOfComments = newPost.numberOfComments + 1
+  //   return await this.postsRepository.save(newPost)
+  // }
 
-  async decreaseNumberOfComments(post: Post) {
-    const newPost: Post = {...post, numberOfComments: post.numberOfComments - 1}
-    return await this.postsRepository.save(newPost)
-  }
+  // async decreaseNumberOfComments(post: Post) {
+  //   const newPost: Post = {...post, numberOfComments: post.numberOfComments - 1}
+  //   return await this.postsRepository.save(newPost)
+  // }
 
   async increaseNumberOfLikes(post: Post) {
     const newPost: Post = {...post, numberOfLikes: post.numberOfLikes + 1}
@@ -273,6 +285,16 @@ export class PostsService {
 
   async decreaseNumberOfLikes(post: Post) {
     const newPost: Post = {...post, numberOfLikes: post.numberOfLikes - 1}
+    return await this.postsRepository.save(newPost)
+  }
+
+  async increaseNumberOfLikesAndDecreaseNumberOfDislikes(post: Post) {
+    const newPost: Post = {...post, numberOfLikes: post.numberOfLikes + 1, numberOfDislikes: post.numberOfDislikes - 1}
+    return await this.postsRepository.save(newPost)
+  }
+
+  async increaseNumberOfDislikesAndDecreaseNumberOfLikes(post: Post) {
+    const newPost: Post = {...post, numberOfDislikes: post.numberOfDislikes + 1,  numberOfLikes: post.numberOfLikes - 1,}
     return await this.postsRepository.save(newPost)
   }
 

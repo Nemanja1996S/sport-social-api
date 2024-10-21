@@ -1,6 +1,7 @@
 import { Comment } from "src/comments/entities/comment.entity";
 import { AbstractEntity } from "src/database/abstract.entity";
 import { Friend } from "src/friends/entities/friend.entity";
+import { Friendship } from "src/friendship/entities/friendship.entity";
 import { Post } from "src/posts/entities/post.entity";
 import { Request } from "src/requests/entities/request.entity";
 import { Column, Entity, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
@@ -23,14 +24,14 @@ export class User extends AbstractEntity<User>{
     @Column({type: 'text', nullable: false})
     picture: string;
 
-    @ManyToMany(() => Friend, friend => friend.users)
-    friends: Friend[];
+    // @OneToOne(() => Friend, (friend) => friend.user)
+    // friend: Friend
 
+    @OneToMany(() => Friendship, (friendship) => friendship.user)
+    friendships: Friendship[]
 
     @OneToMany(() => Post, post => post.user)
     posts: Post[]
-    // @Column('simple-array')
-    // friendsIds: number[];
 
     @OneToMany(() => Request, request => request.toUser)
     requests: Request[]
@@ -41,7 +42,7 @@ export class User extends AbstractEntity<User>{
     @Column('simple-array')
     selectedSports: string[];
 
-    @OneToOne(() => Request, request => request.fromUser)
+    @OneToMany(() => Request, request => request.fromUser)
     request: Request
 
     @Column({type: 'text', nullable: false})

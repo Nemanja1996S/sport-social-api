@@ -6,6 +6,7 @@ import { Sport } from "src/sports/entities/sport.entity";
 import { User } from "src/users/entities/user.entity";
 import { Comment } from "src/comments/entities/comment.entity";
 import { DataSource } from "typeorm";
+import { Friendship } from "src/friendship/entities/friendship.entity";
 
 
 
@@ -20,7 +21,7 @@ export const databaseProviders = [
           username: 'postgres',
           password: 'neman',
           database: 'sportSocial',
-          entities: [ User, Friend, Sport, Post, Request, Reaction, Comment
+          entities: [ User, Friend, Sport, Post, Request, Reaction, Comment, Friendship
               // __dirname + '/../**/*.entity{.ts,.js}',
           ],
           synchronize: true,    //synchronize ne sme da bude true u production fazi

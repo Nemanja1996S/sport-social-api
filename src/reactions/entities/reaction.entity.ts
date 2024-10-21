@@ -6,7 +6,7 @@ import { ReactionEnum } from "../dto/create-reaction.dto"
 @Entity({name: 'reactions'})
 export class Reaction extends AbstractEntity<Reaction>{
     
-    @ManyToOne(() => Post, (post) => post.usersReactions,)
+    @ManyToOne(() => Post, (post) => post.usersReactions)
     post: Post
 
     @Column({nullable: false})
