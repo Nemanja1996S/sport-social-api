@@ -7,28 +7,8 @@ import { UpdateSportDto } from './dto/update-sport.dto';
 export class SportsController {
   constructor(private readonly sportsService: SportsService) {}
 
-  // @Post()
-  // create(@Body() createSportDto: CreateSportDto) {
-  //   return this.sportsService.create(createSportDto);
-  // }
-
   @Get()
   findAll() {
     return this.sportsService.findOne(1).then(sports => sports.allSports);
   }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.sportsService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSportDto: UpdateSportDto) {
-  //   return this.sportsService.update(+id, updateSportDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.sportsService.remove(+id);
-  // }
 }

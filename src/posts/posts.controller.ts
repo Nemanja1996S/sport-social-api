@@ -12,33 +12,19 @@ export class PostsController {
     return this.postsService.create(userId, createPostDto);
   }
 
-  @Get()
-  findAll() {
-    this.postsService.findAll().then(posts => {
-      console.log("Posts returned")
-      console.log(posts)
-      return posts;
-    });//return this.postsService.findAll();
-  }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: number) {
-  //   return this.postsService.findOne(id);
-  // }
-
   @Get('ofUser/:id')
   findPostsOfUser(@Param('id') id: number) {
-    return this.postsService.findAllPostsOfUser(id)// return this.postsService.findOne(+id);
+    return this.postsService.findAllPostsOfUser(id)
   }
 
   @Get('ofUser2/:id')
   findPostsOfUser2(@Param('id') id: number) {
-    return this.postsService.findAllPostsOfUser2(id)// return this.postsService.findOne(+id);
+    return this.postsService.findAllPostsOfUser2(id)
   }
 
   @Get('forUser/:id')
   findPostsForUser(@Param('id') id: number) {
-    return this.postsService.findAllPostsForUserId(id)// return this.postsService.findOne(+id);
+    return this.postsService.findAllPostsForUserId(id)
   }
 
   @Patch(':id')

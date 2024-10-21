@@ -14,5 +14,4 @@ export class Reaction extends AbstractEntity<Reaction>{
 
     @Column({type: 'enum', enum: ReactionEnum, default: ReactionEnum.neutral})
     reactionEnum: ReactionEnum
-
 }

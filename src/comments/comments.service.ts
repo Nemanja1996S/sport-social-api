@@ -12,8 +12,7 @@ import { Post } from 'src/posts/entities/post.entity';
 export class CommentsService {
 
   constructor(@Inject('COMMENT_REPOSITORY') private commentsRepository: Repository<Comment>,
-  // @Inject('POST_REPOSITORY') private postsRepository: Repository<Post>,
-   private postsService: PostsService, //private usersService: UsersService
+   private postsService: PostsService, 
 
   ){}
 
@@ -22,14 +21,9 @@ export class CommentsService {
     const user = await this.postsService.findOneUser(createCommentDto.userId)
     if(!post && !user)
       throw new error("Nemoguce postaviti komentar")
-    // const s = await this.postsService.increaseNumberOfComments(post)
     const newPost: Post = {...post, numberOfComments: post.numberOfComments + 1 }
     const comment = this.commentsRepository.create({...createCommentDto, commentDate: getCurrentDateAndTime(), post: newPost, user: user})
     return await this.commentsRepository.save(comment)
-  }
-
-  async findAll() {
-    return await this.commentsRepository.find()
   }
 
   async findOne(id: number) {
@@ -45,31 +39,6 @@ export class CommentsService {
       {relations: {user: true, post: true}, select: {post: {id: true},
        user: {id: true, name: true, surname: true, picture: true }},
     where: {post: {id: postId}}})
-    // const comments = await this.findAllCommentsOfPost(postId)
-    // const user = await this.usersService.findOne(userId)
-    // const commExt : ExtendedComment = {
-    //   userId: user.id,
-    //   userFullName: user.name + ' ' + user.surname ,
-    //   userPicSrc: user.picture,
-    //   commentDate: comments,
-    //   commentText: '',
-    //   commentPic: ''
-    // }
-    // return Promise<ExtendedComment>((resolve, reject => ))
-    // return await this.commentsRepository.createQueryBuilder('comms')
-    // .leftJoinAndSelect("comments","post")
-    // .getMany()
-    // const users = await connection.getRepository(User)
-    // .createQueryBuilder('user')
-    // .select("user.id", 'id')
-    // .addCommonTableExpression(`
-    //   SELECT "userId" FROM "post"
-    //   `, 'post_users_ids')
-    // .where(`user.id IN (SELECT "userId" FROM 'post_users_ids')`)
-    // .getMany();
-    // return await this.commentsRepository.createQueryBuilder('comms')
-    // .leftJoinAndSelect("users", "user", "user.id = comms.userId")
-    // .getMany()
   }
 
   async update(commentId: number, updateCommentDto: UpdateCommentDto) {
@@ -86,7 +55,6 @@ export class CommentsService {
       throw new NotFoundException();
     }
     const newComment: Comment = {...comment, post: {...comment.post, numberOfComments: comment.post.numberOfComments -1}}
-    // await this.postsService.decreaseNumberOfComments(comment.post)
     this.commentsRepository.save(newComment);
     return await this.commentsRepository.remove(newComment);
   }

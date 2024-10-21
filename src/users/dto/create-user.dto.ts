@@ -3,7 +3,6 @@ import { CreatePostDto } from "src/posts/dto/create-post.dto";
 import { CreateRequestDto } from "src/requests/dto/create-request.dto";
 
 export class CreateUserDto {
-
     name: string;
     surname: string;
     email: string;

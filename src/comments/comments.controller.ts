@@ -12,11 +12,6 @@ export class CommentsController {
     return this.commentsService.create(postId, createCommentDto);
   }
 
-  @Get()
-  findAll() {
-    return this.commentsService.findAll();
-  }
-
   @Get('userComment/:postId')
   finda(@Param('postId') postId: number) {
     return this.commentsService.findAllCommentsOfPostWithUser(postId);

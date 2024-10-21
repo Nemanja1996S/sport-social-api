@@ -11,5 +11,4 @@ export class Friendship extends AbstractEntity<Friendship>{
 
     @ManyToOne(() => Friend, (friend) => friend.friendships, {cascade: true})
     friend: Friend
-
 }

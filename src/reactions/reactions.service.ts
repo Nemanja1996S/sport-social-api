@@ -53,7 +53,6 @@ export class ReactionsService {
     if(updateReactionDto.reactionEnum === ReactionEnum.like){
       if(reaction.reactionEnum.valueOf() === ReactionEnum.dislike.valueOf())
       {
-        console.log("Upao sam u bio dislajk, a udaren lajk")
         await this.postsService.increaseNumberOfLikesAndDecreaseNumberOfDislikes(post)
         currentReactionEnum = ReactionEnum.like
       }
@@ -75,10 +74,7 @@ export class ReactionsService {
       }
       else{
         if(reaction.reactionEnum.valueOf() === ReactionEnum.like.valueOf()){
-          // console.log("Upao sam u bio lajk, a udaren dislajk")
           await this.postsService.increaseNumberOfDislikesAndDecreaseNumberOfLikes(post)
-          // await this.postsService.decreaseNumberOfLikes(post)
-          // await this.postsService.increaseNumberOfDislikes(post)
           currentReactionEnum = ReactionEnum.dislike
         }
         else{

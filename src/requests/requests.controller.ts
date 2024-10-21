@@ -13,13 +13,8 @@ export class RequestsController {
   }
 
   @Post()
-  accept(@Body() createRequestDto: CreateRequestDto) {  ////////accaept rq
+  accept(@Body() createRequestDto: CreateRequestDto) { 
     return this.requestsService.create(createRequestDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.requestsService.findAll();
   }
 
   @Get(':userId')

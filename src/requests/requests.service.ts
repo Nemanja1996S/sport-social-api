@@ -31,17 +31,11 @@ export class RequestsService {
   }
 
   async findAllRequestsForUser(userId: number) {
-    return await this.requestsRepository.find({relations: { fromUser: {friendships: {friend: true}}}, //toUser: true,
+    return await this.requestsRepository.find({relations: { fromUser: {friendships: {friend: true}}}, 
        where: {toUser: {id: userId}},
-      select: { fromUser: {id: true, name: true, surname: true, selectedSports: true, //toUser: {id: true},
-        picture: true, friendships: true}}});  //{id: false, friend: {id: true}} friendsIDs nema {friend: {id: true}}
+      select: { fromUser: {id: true, name: true, surname: true, selectedSports: true, 
+        picture: true, friendships: true}}});  
   }
-
-  // async findAllRequestsForUserAndFromUsers(userId: number) {
-  //   const allRequests = await this.requestsRepository.find({relations: {toUser: true}, where: {toUser: {id: userId}}});
-  //   let fromUserIds: number[] = allRequests.map(request => request.fromUserId)
-  //   return this.usersService.find
-  // }
 
   async findRequest(toUserId: number, fromUserId: number) {
     return await this.requestsRepository.findOne({relations: {toUser: true}, where: {toUser: {id: toUserId}, }})//fromUserId: fromUserId
@@ -51,10 +45,10 @@ export class RequestsService {
     return await this.requestsRepository.findOne({
        where: {toUser: [{id: toUserId}, {id: fromUserId}], fromUser: [{id: fromUserId}, {id: toUserId} ]},
       select: {id: true, fromUser: {id: true}, toUser: {id: true}},
-    relations: {toUser: true, fromUser: true}})//fromUserId: fromUserId
+    relations: {toUser: true, fromUser: true}})
   }
 
-  async update(updateRequestDto: UpdateRequestDto) {  //add request
+  async update(updateRequestDto: UpdateRequestDto) {  
     const request = await this.findRequest(updateRequestDto.fromUserId, updateRequestDto.toUserId);
     if(request){
       throw new error("Request already exists");

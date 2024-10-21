@@ -24,9 +24,6 @@ export class User extends AbstractEntity<User>{
     @Column({type: 'text', nullable: false})
     picture: string;
 
-    // @OneToOne(() => Friend, (friend) => friend.user)
-    // friend: Friend
-
     @OneToMany(() => Friendship, (friendship) => friendship.user)
     friendships: Friendship[]
 
@@ -56,5 +53,4 @@ export class User extends AbstractEntity<User>{
 
     @Column({type: 'text', nullable: true})
     aboutMe: string
-    
 }

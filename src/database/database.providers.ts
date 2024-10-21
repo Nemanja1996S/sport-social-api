@@ -17,16 +17,14 @@ export const databaseProviders = [
         const dataSource = new DataSource({
           type: 'postgres',
           host: 'localhost',
-          port: 5432, //5050
+          port: 5432,
           username: 'postgres',
           password: 'neman',
           database: 'sportSocial',
           entities: [ User, Friend, Sport, Post, Request, Reaction, Comment, Friendship
-              // __dirname + '/../**/*.entity{.ts,.js}',
           ],
-          synchronize: true,    //synchronize ne sme da bude true u production fazi
+          synchronize: true,   
         });
-  
         return dataSource.initialize();
       },
     },

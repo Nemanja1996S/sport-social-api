@@ -33,10 +33,6 @@ export class FriendshipService {
     return
   }
 
-  findAll() {
-    return `This action returns all friendship`;
-  }
-
   findAllRealationshipsForUser(userId: number) {
     return this.friendshipRepository.find({select: { friend: {id: true}},
        where: {user: {id: userId}}, relations: { friend: true} })

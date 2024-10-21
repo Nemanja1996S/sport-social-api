@@ -11,9 +11,4 @@ export class Friend {
 
     @OneToMany(() => Friendship, (friendship) => friendship.friend)
     friendships: Friendship[]
-
-     // @OneToOne(() => User, (user) => user.friend)
-    // @JoinColumn()
-    // user: User
-
 }
